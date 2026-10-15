@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <h1>Register</h1>
+
+    {% for error in errors %}
+        <p class="error">{{ error }}</p>
+    {% endfor %}
+
+    <form method="post" action="{{ path('app_register') }}">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ email }}" autocomplete="email" required autofocus>
+
+        <label for="password">Password (8 characters min.)</label>
+        <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
+
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('register') }}">
+
+        <button type="submit">Create account</button>
+    </form>
+
+    <p>Already have an account? <a href="{{ path('app_login') }}">Log in</a></p>
+{% endblock %}
