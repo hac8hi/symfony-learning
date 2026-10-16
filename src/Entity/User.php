@@ -37,14 +37,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     /**
-     * @var Collection<int, Task>
+     * @var Collection<int, Project>
      */
-    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'user')]
-    private Collection $tasks;
+    #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'User', orphanRemoval: true)]
+    private Collection $projects;
 
     public function __construct()
     {
-        $this->tasks = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,29 +113,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Task>
+     * @return Collection<int, Project>
      */
-    public function getTasks(): Collection
+    public function getProjects(): Collection
     {
-        return $this->tasks;
+        return $this->projects;
     }
 
-    public function addTask(Task $task): static
+    public function addProject(Project $project): static
     {
-        if (!$this->tasks->contains($task)) {
-            $this->tasks->add($task);
-            $task->setUser($this);
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
+            $project->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeTask(Task $task): static
+    public function removeProject(Project $project): static
     {
-        if ($this->tasks->removeElement($task)) {
+        if ($this->projects->removeElement($project)) {
             // set the owning side to null (unless already changed)
-            if ($task->getUser() === $this) {
-                $task->setUser(null);
+            if ($project->getUser() === $this) {
+                $project->setUser(null);
             }
         }
 

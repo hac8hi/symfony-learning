@@ -14,13 +14,21 @@ class Task
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 20)]
-    private string $title;
+    #[ORM\Column(length: 255)]
+    private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\Column(length: 8)]
+    private ?string $key_task = null;
+
     #[ORM\ManyToOne(inversedBy: 'tasks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Project $Project = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     public function getId(): ?int
@@ -45,9 +53,33 @@ class Task
         return $this->description;
     }
 
-    public function setDescription(?string $description): static
+    public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getKeyTask(): ?string
+    {
+        return $this->key_task;
+    }
+
+    public function setKeyTask(string $key_task): static
+    {
+        $this->key_task = $key_task;
+
+        return $this;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->Project;
+    }
+
+    public function setProject(?Project $Project): static
+    {
+        $this->Project = $Project;
 
         return $this;
     }

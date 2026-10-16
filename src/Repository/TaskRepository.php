@@ -16,28 +16,35 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
-//    /**
-//     * @return Task[] Returns an array of Task objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Task[] tasks with their project and assignee loaded in a single query
+     */
+    public function findAllWithRelations(): array
+    {
+        return $this->createQueryBuilder('t')
+            ->addSelect('p', 'u')
+            ->innerJoin('t.Project', 'p')
+            ->innerJoin('t.user', 'u')
+            ->orderBy('p.name', 'ASC')
+            ->addOrderBy('t.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
-//    public function findOneBySomeField($value): ?Task
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * @return Task[]
+     */
+    public function findByProjectId(int $project_id): array
+    {
+        return $this->createQueryBuilder('t')
+            ->addSelect('u')
+            ->innerJoin('t.user', 'u')
+            ->andWhere('t.Project = :project_id')
+            ->setParameter('project_id', $project_id)
+            ->orderBy('t.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

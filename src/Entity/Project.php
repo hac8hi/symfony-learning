@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Entity\User;
+use App\Repository\ProjectRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Table(name: 'project')]
-#[ORM\UniqueConstraint(name: 'UNIQ_CONSTRAINT_EMAIL', fields: ['key_ref'])]
-#[UniqueEntity(fields: ['key_ref'], message: 'There is already a project that has this key_ref')]
-class Project {
-
+#[ORM\Entity(repositoryClass: ProjectRepository::class)]
+class Project
+{
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -20,10 +20,111 @@ class Project {
     private ?string $name = null;
 
     #[ORM\Column(length: 3)]
-    private ?string $key_ref = null;
+    private ?string $key_project = null;
 
-   
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $description = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    private User $user;
+    #[ORM\ManyToOne(inversedBy: 'projects')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $User = null;
+
+    /**
+     * @var Collection<int, Task>
+     */
+    #[ORM\OneToMany(
+        targetEntity: Task::class, 
+        mappedBy: 'Project', 
+        orphanRemoval: true,
+        cascade:['persist']
+    )]
+    private Collection $tasks;
+
+    public function __construct()
+    {
+        $this->tasks = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getKeyProject(): ?string
+    {
+        return $this->key_project;
+    }
+
+    public function setKeyProject(string $key_project): static
+    {
+        $this->key_project = $key_project;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->User;
+    }
+
+    public function setUser(?User $User): static
+    {
+        $this->User = $User;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
+    public function addTask(Task $task): static
+    {
+        if (!$this->tasks->contains($task)) {
+            $this->tasks->add($task);
+            $task->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Task $task): static
+    {
+        if ($this->tasks->removeElement($task)) {
+            // set the owning side to null (unless already changed)
+            if ($task->getProject() === $this) {
+                $task->setProject(null);
+            }
+        }
+
+        return $this;
+    }
 }

@@ -8,20 +8,52 @@
     <table>
         <thead>
             <tr>
-                <th>#</th>
+                <th>Key</th>
                 <th>Name</th>
-                <th>Status</th>
+                <th>Description</th>
+                <th>Owner</th>
+                <th>Tasks</th>
             </tr>
         </thead>
         <tbody>
             {% for project in projects %}
                 <tr>
-                    <td>{{ project.id }}</td>
+                    <td>{{ project.keyProject }}</td>
                     <td>{{ project.name }}</td>
-                    <td>{{ project.status }}</td>
+                    <td>{{ project.description }}</td>
+                    <td>{{ project.user.userIdentifier }}</td>
+                    <td>{{ project.tasks|length }}</td>
                 </tr>
             {% else %}
-                <tr><td colspan="3">No projects yet.</td></tr>
+                <tr><td colspan="5">No projects yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Tasks</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Title</th>
+                <th>Project</th>
+                <th>Assignee</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task.keyTask }}</td>
+                    <td>
+                        {{ task.title }}<br>
+                        <small>{{ task.description }}</small>
+                    </td>
+                    <td>{{ task.project.name }}</td>
+                    <td>{{ task.user.userIdentifier }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4">No tasks yet.</td></tr>
             {% endfor %}
         </tbody>
     </table>
