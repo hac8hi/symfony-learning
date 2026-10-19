@@ -33,6 +33,7 @@
     <body>
         <nav>
             <a href="{{ path('app_home') }}"><strong>Symfony Learning</strong></a>
+            <div>Tasks assigned to me: {{ my_task_count() }}</div>
             <div>
                 {% if app.user %}
                     {{ app.user.userIdentifier }}

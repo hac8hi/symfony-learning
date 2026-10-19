@@ -1,0 +1,50 @@
+{{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.key_project) }}
+    {{ form_row(form.description) }}
+
+    <h2>Tasks</h2>
+    <div id="tasks"
+         data-prototype="{{ form_widget(form.tasks.vars.prototype)|e('html_attr') }}"
+         data-index="{{ form.tasks|length }}">
+        {% for taskForm in form.tasks %}
+            <div class="task-item">
+                {{ form_widget(taskForm) }}
+                <button type="button" class="remove-task">Delete</button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" id="add-task">+ Add a task</button>
+    <button type="submit">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
+
+<script>
+    const container = document.getElementById('tasks');
+
+    function addDeleteButton(item) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'remove-task';
+        btn.textContent = 'Supprimer';
+        item.appendChild(btn);
+    }
+
+    document.getElementById('add-task').addEventListener('click', () => {
+        const index = parseInt(container.dataset.index);
+        const html = container.dataset.prototype.replace(/__name__/g, index);
+        container.dataset.index = index + 1;
+
+        const item = document.createElement('div');
+        item.className = 'task-item';
+        item.innerHTML = html;
+        addDeleteButton(item);
+        container.appendChild(item);
+    });
+
+    container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-task')) {
+            e.target.closest('.task-item').remove();
+        }
+    });
+</script>

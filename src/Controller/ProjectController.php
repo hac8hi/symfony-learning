@@ -71,4 +71,24 @@ class ProjectController extends AbstractController {
             'form' => $form,
         ]);
     }
+
+    #[Route('/project/{id}/edit', name: 'app_project_edit', requirements: ['id' => '\d+'])]
+    #[IsGranted('PROJECT_EDIT', subject: 'project')]
+    public function edit(Project $project, Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(ProjectType::class, $project);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush(); // no persist(): the project is already managed
+
+            $this->addFlash('success', 'Project updated!');
+            return $this->redirectToRoute('app_project_edit', ['id' => $project->getId()]);
+        }
+
+        return $this->render('project/edit.html.twig', [
+            'project' => $project,
+            'form' => $form,
+        ]);
+    }
 }

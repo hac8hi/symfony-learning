@@ -14,6 +14,7 @@
                 <th>Description</th>
                 <th>Owner</th>
                 <th>Tasks</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +25,7 @@
                     <td>{{ project.description }}</td>
                     <td>{{ project.user.userIdentifier }}</td>
                     <td>{{ project.tasks|length }}</td>
+                    <td><a href="{{ path('app_project_edit', {id: project.id}) }}">Edit</a></td>
                 </tr>
             {% else %}
                 <tr><td colspan="5">No projects yet.</td></tr>
